@@ -1,0 +1,22 @@
+.intesrestingfact{
+    font-style: italic;
+}
+
+.boldedlabel{
+  font-weight: bold;
+}
+
+.info-container{
+  border-style: groove;
+    font-style: italic;
+  width: 35%;
+}
+
+.infoborder{
+  border-style: groove;
+    width: 98%;
+}
+
+.bottom-padding {
+     padding-bottom: 5px;
+}
