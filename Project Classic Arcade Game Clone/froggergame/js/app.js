@@ -66,7 +66,7 @@ Player.prototype.update = function() {
 
           if (Math.abs(allEnemies[enemy].x - this.x) < 50 &&
             Math.abs(allEnemies[enemy].y - this.y) < 66) {
-			  alert("Game over! Press Ok to play again!")
+			  alert("Collision Detected !! Game over! Press Ok to play again!")
 			  this.reset();
 		}
 	}
