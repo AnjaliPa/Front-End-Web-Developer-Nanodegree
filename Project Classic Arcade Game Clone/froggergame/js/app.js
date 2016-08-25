@@ -1,11 +1,8 @@
-// Enemies our player must avoid
-var Enemy = function() {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
+var content;
 
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
-   // this.sprite = 'images/enemy-bug.png';
+var Enemy = function() {
+    // Variables applied to each of the instances here,
+   
 	
 	//Update the enemy's position
 	this.type = random(1, 6);
@@ -19,17 +16,13 @@ var random = function (min, max) {
     return Math.floor(Math.random() * (max - min) + min);
 };
 
-// Urequired method for game
-// Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
 
-    // You should multiply any movement by the dt parameter
+    // multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
 	   this.x += this.speed * dt;
-	/**
-     * If any enemy is off the screen, remove it, and add a new one to the array.
-     */
+	
     var length = allEnemies.length;
     for (var enemy = 0; enemy < length; enemy ++) {
 
@@ -42,7 +35,7 @@ Enemy.prototype.update = function(dt) {
 
 };
 
-// Draw the enemy on the screen, required method for game
+// Draw the enemy on the screen
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 	
@@ -66,14 +59,39 @@ Player.prototype.update = function() {
 
           if (Math.abs(allEnemies[enemy].x - this.x) < 50 &&
             Math.abs(allEnemies[enemy].y - this.y) < 66) {
-			  alert("Collision Detected !! Game over! Press Ok to play again!")
-			  this.reset();
+                content="Enemy Collide with Player,Game over!!"
+             
+              //window.location.reload(); 
+			 openmodal();
+              
+			 
 		}
 	}
 
        
     
 };
+// it is defined for Open dialog Model
+function openmodal(){
+    // Get the modal
+var modal = document.getElementById('myModal');
+$("#result").replaceWith(content);
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+modal.style.display = "block";
+  
+
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+    modal.style.display = "none";
+     window.location.reload(); 
+     this.reset();
+}
+
+
+}
 Player.prototype.handleInput = function (keycode) {
 
     /**
@@ -85,7 +103,7 @@ Player.prototype.handleInput = function (keycode) {
 		
     }
 
-    else if (keycode === 'down' && this.y < 606 ) {
+    else if (keycode === 'down' && this.y < 396 ) {
         this.y += 83;
     }
 
@@ -97,8 +115,10 @@ Player.prototype.handleInput = function (keycode) {
         this.x += 101;
     }
 	if(this.y === -13 ){
-        alert("You Won!!!!!!!")
-	this.reset();
+        content="You Reached on Water Level You Won the Game!!!"
+        openmodal();
+       
+	
 	
 	}
     
@@ -109,11 +129,11 @@ Player.prototype.reset = function (keycode) {
     this.y = 402;
 }
 
-// Draw the enemy on the screen, required method for game
+// Draw the enemy on the screen
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
-// Now instantiate your objects.
+//instantiate  objects.
 var player = new Player();
 
 
@@ -125,8 +145,8 @@ var enemy3 = new Enemy();
 var allEnemies = [enemy1,enemy2,enemy3];
 
 
-// This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
+// This listens for key presses and sends the keys to 
+// Player.handleInput() method.
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
         37: 'left',
@@ -138,4 +158,5 @@ document.addEventListener('keyup', function(e) {
     player.handleInput(allowedKeys[e.keyCode]);
 	
 });
+
 
