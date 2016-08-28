@@ -1,229 +1,148 @@
- // model for store locations
-     $(document).ready(function(){
-    //Global variable declaration
-    var map_location = [];
-    var model = {
+'use strict';
 
-        "locations" : [
-            {
-                location: "Fremont CA",
-            },
-            {
-                location : 'Sunnyvale CA',
-            },
-            {
-                location : 'Santa Clara CA',
-            },
-            {
-                location : 'Milpitas CA',
-            },
-            {
-                location : 'San Francisco CA',
-            }
-        ]
-    };
-
-
-   
-
-        var map;    // declares a global map variable
-        window.addEventListener('resize', function(e) {
-          // Make sure the map bounds get updated on page resize
-         });
-
-
-	var initlist = function() {
-	for (i = 0; i < map_location.length; i++) {
-				
-				if(map_location[i].formatted_address == document.getElementById('myFilter').value)
-				{
-					alert(map_location[i].formatted_address)
-				}
-				else
-				{
-					 var marker = new google.maps.Marker({
-					  map: null,
-					  position: null,
-					  title: null
-
-            });
-				}
+//Global variable
+var map;
+var clientID;
+var clientSecret;
+// initliaze static locations
+var Locations = [
+	{
+		locationname: 'Sunnyvale CA',
+		latitude: 37.36883,
+		longitude: -122.0363496
+	},
+	{
+		locationname: 'Cupertino, CA',
+		latitude: 37.3229978,
+		longitude: -122.03218229999999
+	},
+    {
+		locationname: 'Santa Clara CA',
+		latitude: 37.35410789999999,
+		longitude: -121.95523559999998
+	},
+    {
+		locationname: 'Great Mall, Milpitas, CA',
+		latitude: 37.4157632,
+		longitude: -121.90493249999997
+	},
+    {
+		locationname: 'San Jose, CA',
+		latitude: 37.3382082,
+		longitude: -121.88632860000001
 	}
-			
-}
-     /*  var initlist = function() {
-            ul = document.createElement('ul');
-            var div = document.getElementById('location-list');
-            var li;
-            var cList = $('ul')
-        $.each(map_location,function(i)
-        {
-            li = $('<li/>').addClass('location-name').attr('id', map_location[i].id).text(map_location[i].formatted_address).appendTo(cList);
-        });
-   }*/
+];
 
-var gettitle;
-        function createMapMarker(placeData) {
+function AppViewModel() {
+	var self = this;
+	this.search = ko.observable('');
+    
+	this.locationList = ko.observableArray([]);
+	 map = new google.maps.Map(document.getElementById('map'), {
+			zoom: 12,
+			center: {lat: 37.36883, lng: -122.0363496}
+	});
+    
+    
 
-            // The next lines save location data from the search result object to local variables
-            var lat = placeData.geometry.location.lat();  // latitude from the place service
-            var lon = placeData.geometry.location.lng();  // longitude from the place service
-            var name = placeData.formatted_address;   // name of the place from the place service
-            var bounds = window.mapBounds;            // current boundaries of the map window
-
-            // marker is an object with additional data about the pin for a single location
-            var marker = new google.maps.Marker({
-              map: map,
-              position: placeData.geometry.location,
-              title: name
-
-            });
-			 ul = document.createElement('ul');
-            var div = document.getElementById('location-list');
-            var li;
-            var cList = $('ul')
-			
-            li = $('<li/>').addClass('location-name').attr('id', name.id).text(name).appendTo(cList);
-       		var infoWindow = new google.maps.InfoWindow({
-              content: name
-            });
-            gettitle = marker.title
-            google.maps.event.addListener(marker, 'click', function() {
-            infoWindow.open(map,marker);
-            });
- 			$('#location-list').on('click', 'li', function () {
-  			if(this.innerHTML == marker.title){
-				infoWindow.open(map,marker);
-			}
-			
-			});
-			$('#myFilter').on('keyup', function () {
-  			
-			var keyword = document.getElementById('myFilter').value;
-			 
-			/* if (marker.map === null) {
-				 alert("not null")
-				map_location[i].marker.setMap(map);
-			  }*/
-			  if (marker.title.toLowerCase().indexOf(keyword) === -1 ) {
-				
-				marker.setMap(null);
-			 }
-			 else
-			 {
-				 marker.setMap(map);
-			 }
- //  }
-			});
-			
-			/*********************************************/
-			
-	var initlist = function(keyword) {
-		
-	//for (i = 0; i < map_location.length; i++) {
-		 for (var i in map_location) {
-			
-			 
-			/* if (map_location[i].marker.map === null) {
-				 alert("not null")
-				map_location[i].marker.setMap(map);
-			  }
-			  if (map_location[i].name.indexOf(keyword) === -1 ) {
-				  alert("get value")*/
-				map_location[i].marker.setMap(null);
-			 // }
-    }
-	
-	
-				
-				/*if(map_location[i].formatted_address == document.getElementById('myFilter').value)
-				{
-					alert(map_location[i].formatted_address)
-				}
-				else
-				{
-					 map_location[i].setMap(null);
-           
-				}*/
-	
-			
-}
-
-			/******************************************/
-            // this is where the pin actually gets added to the map.
-            // bounds.extend() takes in a map location object
-            bounds.extend(new google.maps.LatLng(lat, lon));
-            // fit the map to the new marker
-            map.fitBounds(bounds);
-            // center the map
-            map.setCenter(bounds.getCenter());
-
-
-          }
-         
-        function callback(results, status) {
-            if (status == google.maps.places.PlacesServiceStatus.OK) {
-				createMapMarker(results[0]);
-             	 map_location.push(results[0]);
-				 
-			   }
-			  
-          }
-
-
-         function pinPoster(locations) {
-            // creates a Google place search service object. PlacesService does the work of
-            // actually searching for location data.
-            var service = new google.maps.places.PlacesService(map);
-
-            // Iterates through the array of locations, creates a search object for each location
-            for (var place in locations) {
-              var request = {
-                query: locations[place]
-              };
-              // Actually searches the Google Maps API for location data and runs the callback
-              // function with the search results after each search.
-              service.textSearch(request, callback);
-            }
-          }
-         
-         
-         function locationFinder() {
-            // initializes an empty array
-            var locations = [];
-            // adds the single location property from bio to the locations array
-            for (var i in model.locations) {
-              locations.push(model.locations[i].location);
-            }
-          return locations;
-          }
-
-   
-        function initializeMap() {
-              var mapOptions;
-              map = new google.maps.Map(document.querySelector('#map'), mapOptions);
-              // Sets the boundaries of the map based on pin locations
-             window.mapBounds = new google.maps.LatLngBounds();
-            locations = locationFinder();
-            pinPoster(locations);
-
-        }
-
-     var appViewModel = function() {
-          var self = this;
-          self.markers = ko.observableArray([]);
-          self.allLocations = ko.observableArray([]);
-          self.locations  = ko.observable([]);
-
-          self.filter =  ko.observable("");
-          self.search = ko.observable("");
-
-          var map = initializeMap();
-          self.map = ko.observable(map);
-    }
-
-         ko.applyBindings(new appViewModel());
+	Locations.forEach(function(locationItem){
+		self.locationList.push( new GetLocations(locationItem));
+	});
+    this.filteredList = ko.computed(function() {
+		var check = self.search().toLowerCase();
       
-     
-  
-    });
+		if (!check) {
+            	self.locationList().forEach(function(locationItem){
+				locationItem.visible(true);
+			});
+			return self.locationList();
+		} else {
+             
+			return ko.utils.arrayFilter(self.locationList(), function(locationItem) {
+				var loc = locationItem.locationname.toLowerCase();
+				var getvalue = (loc.search(check) >= 0);
+				locationItem.visible(getvalue);
+				return getvalue;
+			});
+		}
+	});
+}
+
+
+function LoadApp() {
+   
+	ko.applyBindings(new AppViewModel());
+}
+
+function errorHandle() {
+	alert("Google Maps has failed to load. Please try again later!!!");
+}
+
+var GetLocations = function(data) {
+    var self = this;
+    this.lat = data.latitude;
+	this.long = data.longitude;
+	this.locationname = data.locationname;
+    this.URL = "";
+	this.street = "";
+	this.city = "";
+	
+	this.visible = ko.observable(true);
+    
+    	// Foursquare API settings
+	clientID = "R2MRCRBJPRWGXBDN3OADY3CHTFLVLGGYNWUI0HX3QU2JSJYA";
+	clientSecret = "CQOGXKI3M1CI2U20T1QWPPVNUNMKQWKHRNGYVXQ3P5FYKHK3";
+    
+    
+    var foursquareURL = 'https://api.foursquare.com/v2/venues/search?ll='+ this.lat + ',' + this.long + '&client_id=' + clientID + '&client_secret=' + clientSecret + '&v=20160118' + '&query=' + this.locationname;
+
+	$.getJSON(foursquareURL).done(function(data) {
+        var results = data.response.venues[0];
+		self.URL = results.url;
+		if (typeof self.URL === 'undefined'){
+			self.URL = "";
+		}
+		self.street = results.location.formattedAddress[0];
+     	self.city = results.location.formattedAddress[1];
+        
+        }).fail(function() {
+		alert("Please refresh the page and try again to load Foursquare data!!!");
+	});
+        
+    this.contentdata = '<div><b>' + data.locationname + "</b></div>"+
+     '<div ><a href="' + self.URL +'">' + self.URL + "</a></div>" +
+        '<div>' + self.street + "</div>" +
+        '<div >' + self.city + "</div>" ;
+	this.infoWindow = new google.maps.InfoWindow({content: self.contentdata});
+	this.marker = new google.maps.Marker({
+			position: new google.maps.LatLng(data.latitude, data.longitude),
+			map: map,
+			title: data.locationname
+	});
+
+	this.showMarker = ko.computed(function() {
+		if(this.visible() === true) {
+			this.marker.setMap(map);
+		} else {
+			this.marker.setMap(null);
+		}
+		return true;
+	}, this);
+    this.marker.addListener('click', function(){
+		self.contentdata = '<div><b>' + data.locationname + "</b></div>" +
+         '<div class="content"><a href="' + self.URL +'">' + self.URL + "</a></div>" +
+        '<div class="content">' + self.street + "</div>" +
+        '<div class="content">' + self.city + "</div>"  ;       
+        self.infoWindow.setContent(self.contentdata);
+		self.infoWindow.open(map, this);
+		self.marker.setAnimation(google.maps.Animation.BOUNCE);
+      	setTimeout(function() {
+      		self.marker.setAnimation(null);
+     	}, 3000);
+	});
+
+	this.bouncemarker = function(placeval) {
+		google.maps.event.trigger(self.marker, 'click');
+	};
+
+};

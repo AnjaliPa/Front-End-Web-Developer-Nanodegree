@@ -1,10 +1,31 @@
-#map {
-        width: 1000px;
-        height: 700px;
-      }
+ 
 
+ 
+@media screen and (min-width: 300px) and (max-width: 800px) {
+    .container {
+        background-color: lightseagreen;
+    }
+     .mapheader {
+        width: 400px;
+        height: 650px;
+      }
+}
 .part1
 {
-
+font-family: cursive;
+color: white;
 float:left;
+   
 }
+@media screen and (min-width: 900px) {
+    .container {
+        background-color: cadetblue;
+     height: 1000px;
+    }
+    .mapheader {
+        width: 1150px;
+        height: 750px;
+      }
+}
+
+
